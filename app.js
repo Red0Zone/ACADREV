@@ -4,7 +4,7 @@ const express = require('express');
 const app = express();
 const authRoutes = require('./routes/authRoutes'); // Adjust the path as needed
 const universityRoutes = require('./routes/universityRoutes'); // University routes
-const collageRoutes = require('./routes/collageRoutes'); // collages routes
+const collegeRoutes = require('./routes/collegeRoutes'); // collages routes
 const departmentRoutes = require('./routes/departmentRoutes'); // department routes
 const userRoutes = require('./routes/userRoutes'); // user routes
 const programRoutes = require('./routes/programRoutes');
@@ -19,7 +19,7 @@ app.use(express.json()); // For parsing JSON request bodies
 app.use('/auth', authRoutes); // All auth routes will be prefixed with /auth
 app.use('/authority', authorityRoutes);
 app.use('/universities', universityRoutes); // University routes for adding universities
-app.use('/collages', collageRoutes); // collages routes for adding universities
+app.use('/colleges', collegeRoutes); // collages routes for adding universities
 app.use('/departments', departmentRoutes); // department routes
 app.use('/users', userRoutes); // user routes
 app.use('/programs', programRoutes);
