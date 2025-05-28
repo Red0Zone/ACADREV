@@ -75,9 +75,32 @@ const updateDepartment = async (req, res) => {
   }
 };
 
+const getDepartmentsByCollege = async (req, res) => {
+  const college_id = req.params.college_id;
+
+  try {
+    const departments = await departmentModel.getDepartmentsByCollege(college_id);
+    res.status(200).json(departments);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching departments by college', error: err });
+  }
+};
+
+const getDepartmentUniversity = async (req, res) => {
+  const university_id = req.params.university_id;
+  try {
+    const colleges = await departmentModel.getDepartmentUnversity(university_id);
+    res.status(200).json(colleges);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching colleges', error: err });
+  }
+};
+
 module.exports = {
   addDepartment,
   getAllDepartments,
   getMyDepartment,
-  updateDepartment
+  updateDepartment,
+  getDepartmentsByCollege,
+  getDepartmentUniversity
 };

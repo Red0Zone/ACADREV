@@ -16,7 +16,7 @@ const getAllDepartments = async () => {
   const [rows] = await db.promise().query(
     `SELECT d.*, c.name AS college_name
      FROM departments d
-     LEFT JOIN collages c ON d.college_id = c.id`
+     LEFT JOIN colleges c ON d.college_id = c.id` // Assuming the table is 'collages', if it's 'colleges', adjust here.
   );
   return rows;
 };
@@ -37,9 +37,25 @@ const updateDepartment = async (id, data) => {
   return result;
 };
 
+// جلب الأقسام المرتبطة بكلية معينة
+const getDepartmentsByCollege = async (collegeId) => {
+  const [rows] = await db.promise().query('SELECT * FROM departments WHERE college_id = ?', [collegeId]);
+  return rows;
+};
+
+getDepartmentUniversity = async (university_id) => {
+  const [rows] = await db.promise().query('SELECT * FROM colleges WHERE university_id = ?', [university_id]);
+  for (const college of rows) {
+    college.departments = await getDepartmentsByCollege(college.id);
+  }
+  return rows;
+};
+
+
 module.exports = {
   createDepartment,
   getAllDepartments,
   getDepartmentById,
-  updateDepartment
+  updateDepartment,
+  getDepartmentsByCollege // Add the new function to exports
 };

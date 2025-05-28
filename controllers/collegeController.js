@@ -78,7 +78,7 @@ const updateCollege = async (req, res) => {
 
 // 5. Get colleges for a specific university (based on logged-in university user)
 const getCollegesByUniversity = async (req, res) => {
-  const university_id = req.user?.university_id; // Get university_id from the authenticated user's token
+  const university_id = req.params.university_id; // Get university_id from the authenticated user's token
 
   if (!university_id) {
     return res.status(400).json({ message: 'University ID not found in user token.' });
