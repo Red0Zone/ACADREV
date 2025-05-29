@@ -50,10 +50,16 @@ const deleteUniversity = async (id) => {
   return result;
 };
 
+const getUniversityNamesAndIds = async () => {
+  const [rows] = await db.promise().query('SELECT id, name FROM universities');
+  return rows;
+}
+
 module.exports = {
   createUniversity,
   getAllUniversities,
   getUniversityById,
   updateUniversity,
-  deleteUniversity
+  deleteUniversity,
+  getUniversityNamesAndIds
 };

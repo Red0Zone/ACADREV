@@ -86,6 +86,19 @@ const getDepartmentsByCollege = async (req, res) => {
   }
 };
 
+const getDepartmenNameByCollegeId = async (req, res) => {
+  const college_id = req.params.id;
+
+  try {
+    const departments = await departmentModel.getDepartmenNameByCollegeId(college_id);
+    res.status(200).json({message: 'Department names fetched successfully', departments });
+    
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching department names by college', error: err });
+  }
+};
+
+
 const getDepartmentUniversity = async (req, res) => {
   const university_id = req.params.university_id;
   try {
@@ -102,5 +115,6 @@ module.exports = {
   getMyDepartment,
   updateDepartment,
   getDepartmentsByCollege,
-  getDepartmentUniversity
+  getDepartmentUniversity,
+  getDepartmenNameByCollegeId
 };

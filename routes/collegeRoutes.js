@@ -16,4 +16,6 @@ router.get('/me', authenticateToken, authorizeRole(['college']), collegeControll
 router.put('/update', authenticateToken, authorizeRole(['college']), collegeController.updateCollege);
 
 router.get('/uniAll', authenticateToken, authorizeRole(['university']), collegeController.getCollegesByUniversity);
+// جلب أسماء وIDs الكليات التابعة لجامعة معينة
+router.get('/getNamesByUni/:university_id', authenticateToken, authorizeRole(['admin', 'authority', 'university']), collegeController.getCollegeNameAndIdByUniversityId);
 module.exports = router;

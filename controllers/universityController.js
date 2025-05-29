@@ -81,9 +81,19 @@ const updateUniversity = async (req, res) => {
   }
 };
 
+const getUniversityNamesAndIds = async (req, res) => {
+  try {
+    const universities = await universityModel.getUniversityNamesAndIds();
+    res.status(200).json(universities);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching university names and IDs', error: err });
+  }
+};
+
 module.exports = {
   addUniversity,
   getAllUniversities,
   getMyUniversity,
-  updateUniversity
+  updateUniversity,
+  getUniversityNamesAndIds
 };

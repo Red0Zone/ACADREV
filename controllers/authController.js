@@ -37,16 +37,32 @@ const login = async (req, res) => {
 
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '2h' });
 
+    
+
     //  تعديل الرد
+    let userData = {
+      id: user.id,
+      username: user.username,
+      role: user.role
+    };
+
+    if (user.authority_id !== null && user.authority_id !== undefined && user.role === 'authority') {
+      userData.authority_id = user.authority_id;
+    }
+    if (user.university_id !== null && user.university_id !== undefined && user.role === 'university') {
+      userData.university_id = user.university_id;
+    }
+    if (user.college_id !== null && user.college_id !== undefined && user.role === 'college') {
+      userData.college_id = user.college_id;
+    }
+    if (user.department_id !== null && user.department_id !== undefined && user.role === 'department') {
+      userData.department_id = user.department_id;
+    }
+
     res.status(200).json({
       message: 'Login successful',
       token,
-      role: user.role,
-      user: {
-        id: user.id,
-        username: user.username,
-        role: user.role
-      }
+      user: userData
     });
 
   } catch (err) {

@@ -38,10 +38,15 @@ const updateDepartment = async (id, data) => {
 };
 
 // جلب الأقسام المرتبطة بكلية معينة
-const getDepartmentsByCollege = async (collegeId) => {
-  const [rows] = await db.promise().query('SELECT * FROM departments WHERE college_id = ?', [collegeId]);
+const getDepartmentsByCollege = async (college_id) => {
+  const [rows] = await db.promise().query('SELECT * FROM departments WHERE college_id = ?', [college_id]);
   return rows;
 };
+
+const getDepartmenNameByCollegeId = async (college_id) => {
+  const [rows] = await db.promise().query('SELECT name, id FROM departments WHERE college_id = ?', [college_id]);
+  return rows;
+}
 
 getDepartmentUniversity = async (university_id) => {
   const [rows] = await db.promise().query('SELECT * FROM colleges WHERE university_id = ?', [university_id]);
@@ -57,5 +62,6 @@ module.exports = {
   getAllDepartments,
   getDepartmentById,
   updateDepartment,
-  getDepartmentsByCollege // Add the new function to exports
+  getDepartmentsByCollege,
+  getDepartmenNameByCollegeId,
 };

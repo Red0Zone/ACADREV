@@ -1,4 +1,4 @@
-const db = require('../db');
+// const db = require('../db');
 
 // جلب جميع التصنيفات (المجالات)
 const getAllAreas = async () => {

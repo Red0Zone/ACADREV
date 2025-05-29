@@ -37,20 +37,12 @@ router.put(
   departmentController.updateDepartment
 );
 
-// router.get(
-//   '/by-college/:college_id',
-//   authenticateToken,
-//   authorizeRole(['admin', 'authority', 'university', 'college']),
-//   departmentController.getDepartmentsByCollege
-// );
+router.get('/getDepName/:id/',
+  authenticateToken,
+  authorizeRole(['admin', 'authority', 'university', 'college']),
+  departmentController.getDepartmenNameByCollegeId
+);
 
-// router.get(
-//   '/by-university/:university_id',
-//   authenticateToken,
-//   authorizeRole(['admin', 'authority', 'university']),
-//   departmentController.getDepartmentUnversity
-// );
-// Instantiate DepartmentService with the db connection
 const departmentService = new DepartmentService(db); // Pass the db connection here
 
 router.get('/query', async (req, res) => {
