@@ -50,6 +50,11 @@ const getAllColleges = async (req, res) => {
 
 // 3. الكلية تعرض نفسها
 const getMyCollege = async (req, res) => {
+  if( req.user.role == 'department' ) {
+    const college = await collegeModel.getCollegeByDepartmentId(req.user.department_id);
+    return res.status(200).json(college);
+  }
+  else{
   const id = req.user.college_id;
 
   try {
@@ -58,6 +63,7 @@ const getMyCollege = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: 'Error fetching college', error: err });
   }
+}
 };
 
 // 4. تعديل بيانات الكلية

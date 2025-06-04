@@ -50,11 +50,21 @@ const getCollegesByUniversity = async (universityId) => {
   return rows;
 };
 
+const getCollegeByDepartmentId = async (departmentId) => {
+  const [rows] = await db.promise().query(
+    `SELECT c.* FROM colleges c
+     JOIN departments d ON c.id = d.college_id
+     WHERE d.id = ?`, [departmentId]
+  );
+  return rows[0];
+};
+
 module.exports = {
   createCollege,
   getAllColleges,
   getCollegeById,
   updateCollege,
   getCollegesByUniversity,
-  getCollegeNameAndIdByUniversityId
+  getCollegeNameAndIdByUniversityId,
+  getCollegeByDepartmentId
 };

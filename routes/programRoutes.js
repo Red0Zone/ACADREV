@@ -19,13 +19,13 @@ router.get(
   programController.getAllPrograms
 );
 
-// 👁️ القسم يعرض برامجه فقط
-router.get(
-  '/my',
-  authenticateToken,
-  authorizeRole(['department']),
-  programController.getMyPrograms
-);
+// // 👁️ القسم يعرض برامجه فقط
+// router.get(
+//   '/my',
+//   authenticateToken,
+//   authorizeRole(['department']),
+//   programController.getMyPrograms
+// );
 
 // ✏️ تعديل برنامج (من قبل القسم)
 router.put(
@@ -34,5 +34,27 @@ router.put(
   authorizeRole(['department']),
   programController.updateProgram
 );
+
+router.get('/query',
+  authenticateToken,
+  authorizeRole(['admin', 'authority', 'university', 'college','department']),
+  programController.getAllPrograms
+);
+
+router.get('/getProgName/:Department_id',
+  authenticateToken,
+  authorizeRole(['admin', 'authority', 'university', 'college']),
+  programController.getProgramNameByDepartmentId
+);
+
+router.get(
+  '/:id',
+  authenticateToken,
+  authorizeRole(['admin', 'authority', 'university', 'college', 'department']),
+  programController.getProgramById
+);
+
+
+
 
 module.exports = router;

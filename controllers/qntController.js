@@ -1,6 +1,7 @@
 const qntModel = require('../models/qntModel');
 
 const getAreas = async (req, res) => {
+  console.log("getAreas: ",req.body);
   const data = await qntModel.getAllAreas();
   res.json(data);
 };
@@ -18,8 +19,9 @@ const getItems = async (req, res) => {
 };
 
 const submitResponses = async (req, res) => {
-  const { program_id, user_id, responses } = req.body;
-  await qntModel.submitResponses(responses, program_id, user_id);
+  const { program_id, responses } = req.body;
+  const {id} = req.user; // Assuming user_id is available in req.user
+  await qntModel.submitResponses(responses, program_id, id);
   res.status(200).json({ message: 'Responses saved successfully' });
 };
 

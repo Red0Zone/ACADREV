@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const { get } = require('../routes/universityRoutes');
 
 // إنشاء جامعة جديدة
 const createUniversity = async (data) => {
@@ -55,11 +56,33 @@ const getUniversityNamesAndIds = async () => {
   return rows;
 }
 
+const getUniversityByCollegeId = async (collegeId) => {
+  const [rows] = await db.promise().query(
+    `SELECT u.* FROM universities u
+     JOIN colleges c ON u.id = c.university_id
+     WHERE c.id = ?`, [collegeId]
+  );
+  return rows[0];
+};
+
+const getUniversityByDepartmentId = async (departmentId) => {
+  const [rows] = await db.promise().query(
+    `SELECT u.* 
+     FROM universities u
+     JOIN colleges c ON u.id = c.university_id
+     JOIN departments d ON c.id = d.college_id 
+     WHERE d.id = ?`, [departmentId]
+  );
+  return rows[0];
+};
+
 module.exports = {
   createUniversity,
   getAllUniversities,
   getUniversityById,
   updateUniversity,
   deleteUniversity,
-  getUniversityNamesAndIds
+  getUniversityNamesAndIds,
+  getUniversityByCollegeId,
+  getUniversityByDepartmentId
 };
