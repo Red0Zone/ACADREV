@@ -26,9 +26,30 @@ const submitResponses = async (req, res) => {
 };
 
 const getProgramResponses = async (req, res) => {
-  const programId = req.params.programId;
-  const data = await qntModel.getResponsesByProgram(programId);
-  res.json(data);
+  const programId = req.params.programID;
+  const areaId = req.params.areaID;
+  const data = await qntModel.getResponsesByAreaAndProgram(areaId, programId);
+  
+  // Transform data into a simple grid structure with only values
+  const grid = {};
+  
+  // Process the data to create grid structure: grid[header_id][item_id] = value
+  data.forEach(row => {
+    const { header_id, item_id, value } = row;
+    
+    // Create nested structure: grid[header_id][item_id] = value
+    if (!grid[header_id]) {
+      grid[header_id] = {};
+    }
+    
+    // Use item_id as key, or 'default' if item_id is null
+    const itemKey = item_id || 'default';
+    grid[header_id][itemKey] = value;
+  });
+  
+  res.json({
+    grid: grid
+  });
 };
 
 const updateResponse = async (req, res) => {

@@ -2,7 +2,7 @@ const db = require('../config/db');
 
 // 1. جلب جميع المجالات
 const getAllDomains = async () => {
-  const [rows] = await db.promise().query(`SELECT * FROM domanins`);
+  const [rows] = await db.promise().query(`SELECT * FROM domains`);
   return rows;
 };
 
