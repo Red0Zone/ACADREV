@@ -1,6 +1,7 @@
 const qntModel = require('../models/qntModel');
 
 const getAreas = async (req, res) => {
+  console.log("getAreas: ",req.body);
   const data = await qntModel.getAllAreas();
   res.json(data);
 };
@@ -18,15 +19,37 @@ const getItems = async (req, res) => {
 };
 
 const submitResponses = async (req, res) => {
-  const { program_id, user_id, responses } = req.body;
-  await qntModel.submitResponses(responses, program_id, user_id);
+  const { program_id, responses } = req.body;
+  const {id} = req.user; // Assuming user_id is available in req.user
+  await qntModel.submitResponses(responses, program_id, id);
   res.status(200).json({ message: 'Responses saved successfully' });
 };
 
 const getProgramResponses = async (req, res) => {
-  const programId = req.params.programId;
-  const data = await qntModel.getResponsesByProgram(programId);
-  res.json(data);
+  const programId = req.params.programID;
+  const areaId = req.params.areaID;
+  const data = await qntModel.getResponsesByAreaAndProgram(areaId, programId);
+  
+  // Transform data into a simple grid structure with only values
+  const grid = {};
+  
+  // Process the data to create grid structure: grid[header_id][item_id] = value
+  data.forEach(row => {
+    const { header_id, item_id, value } = row;
+    
+    // Create nested structure: grid[header_id][item_id] = value
+    if (!grid[header_id]) {
+      grid[header_id] = {};
+    }
+    
+    // Use item_id as key, or 'default' if item_id is null
+    const itemKey = item_id || 'default';
+    grid[header_id][itemKey] = value;
+  });
+  
+  res.json({
+    grid: grid
+  });
 };
 
 const updateResponse = async (req, res) => {

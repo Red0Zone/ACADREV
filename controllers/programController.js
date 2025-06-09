@@ -1,4 +1,9 @@
 const programModel = require('../models/programModel');
+const ProgramService = require('../services/programService');
+const db = require('../config/db');
+
+const programService = new ProgramService(db);
+const { buildFilters, handlePaginatedRequest } = programService;
 
 // إضافة برنامج
 const addProgram = async (req, res) => {
@@ -21,26 +26,22 @@ const addProgram = async (req, res) => {
 
 // عرض جميع البرامج
 const getAllPrograms = async (req, res) => {
-  try {
-    const programs = await programModel.getAllPrograms();
-    res.status(200).json(programs);
-  } catch (err) {
-    res.status(500).json({ message: 'Error fetching programs', error: err });
-  }
+  const filters = buildFilters(req.query, req.user.college_id, req.user.university_id, req.user.department_id);
+  await handlePaginatedRequest(req, res, filters, 'All programs retrieved successfully');
 };
 
-// عرض برامج القسم الحالي
-const getMyPrograms = async (req, res) => {
-  const dep = req.user.department_id;
+// // عرض برامج القسم الحالي
+// const getMyPrograms = async (req, res) => {
+//   const dep = req.user.department_id;
 
-  try {
-    const all = await programModel.getAllPrograms();
-    const filtered = all.filter(p => p.dep === dep);
-    res.status(200).json(filtered);
-  } catch (err) {
-    res.status(500).json({ message: 'Error filtering programs', error: err });
-  }
-};
+//   try {
+//     const all = await programModel.getAllPrograms();
+//     const filtered = all.filter(p => p.dep === dep);
+//     res.status(200).json(filtered);
+//   } catch (err) {
+//     res.status(500).json({ message: 'Error filtering programs', error: err });
+//   }
+// };
 
 // تعديل البرنامج
 const updateProgram = async (req, res) => {
@@ -54,9 +55,39 @@ const updateProgram = async (req, res) => {
   }
 };
 
+const getProgramById = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const program = await programModel.getProgramById(id);
+    if (!program) {
+      return res.status(404).json({ message: 'Program not found' });
+    }
+    res.status(200).json(program);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching program', error: err });
+  }
+}
+
+const getProgramNameByDepartmentId = async (req, res) => {
+  const department_id = req.params.Department_id;
+
+  if (!department_id) {
+    return res.status(400).json({ message: 'Department ID is required' });
+  }
+
+  try {
+    const programs = await programModel.getProgramNameByDepartmentId(department_id);
+    res.status(200).json(programs);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching program names', error: err });
+  }
+};
+
 module.exports = {
   addProgram,
   getAllPrograms,
-  getMyPrograms,
-  updateProgram
+  updateProgram,
+  getProgramById,
+  getProgramNameByDepartmentId
 };

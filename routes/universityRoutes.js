@@ -15,4 +15,6 @@ router.get('/me', authenticateToken, authorizeRole(['university','college','depa
 // الجامعة تعدل بياناتها
 router.put('/update', authenticateToken, authorizeRole(['university']), universityController.updateUniversity);
 
+router.get('/getUniNames', authenticateToken, authorizeRole(['admin', 'authority']), universityController.getUniversityNamesAndIds);
+
 module.exports = router;

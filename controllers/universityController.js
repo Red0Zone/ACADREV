@@ -55,7 +55,18 @@ const getAllUniversities = async (req, res) => {
 
 // 3. عرض جامعة واحدة (عرض ذاتي)
 const getMyUniversity = async (req, res) => {
+  if (req.user.role == 'college') {
+    const uni = await universityModel.getUniversityByCollegeId(req.user.college_id);
+    return res.status(200).json(uni);
+  }
+  else if (req.user.role == 'department') {
+    const uni = await universityModel.getUniversityByDepartmentId(req.user.department_id);
+    return res.status(200).json(uni);
+  }
+  else{
+    
   const id = req.user.university_id;
+
 
   try {
     const uni = await universityModel.getUniversityById(id);
@@ -63,6 +74,7 @@ const getMyUniversity = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: 'Error fetching university', error: err });
   }
+}
 };
 
 // 4. تحديث بيانات الجامعة (من قبل الجامعة نفسها)
@@ -81,9 +93,19 @@ const updateUniversity = async (req, res) => {
   }
 };
 
+const getUniversityNamesAndIds = async (req, res) => {
+  try {
+    const universities = await universityModel.getUniversityNamesAndIds();
+    res.status(200).json(universities);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching university names and IDs', error: err });
+  }
+};
+
 module.exports = {
   addUniversity,
   getAllUniversities,
   getMyUniversity,
-  updateUniversity
+  updateUniversity,
+  getUniversityNamesAndIds
 };

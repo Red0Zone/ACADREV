@@ -46,9 +46,17 @@ const updateProgram = async (id, data) => {
   return result;
 };
 
+const getProgramNameByDepartmentId = async (department_id) => {
+  const [rows] = await db.promise().query(
+    'SELECT name, id FROM programs WHERE dep = ?', [department_id]
+  );
+  return rows.map(row => row.name);
+}
+
 module.exports = {
   createProgram,
   getAllPrograms,
   getProgramById,
-  updateProgram
+  updateProgram,
+  getProgramNameByDepartmentId
 };

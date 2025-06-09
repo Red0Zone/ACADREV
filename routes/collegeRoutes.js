@@ -10,10 +10,12 @@ router.post('/add', authenticateToken, authorizeRole(['university']), collegeCon
 router.get('/all', authenticateToken, authorizeRole(['admin', 'authority', 'university']), collegeController.getAllColleges);
 
 // الكلية تعرض نفسها
-router.get('/me', authenticateToken, authorizeRole(['college']), collegeController.getMyCollege);
+router.get('/me', authenticateToken, authorizeRole(['college','department']), collegeController.getMyCollege);
 
 // تعديل بيانات الكلية
 router.put('/update', authenticateToken, authorizeRole(['college']), collegeController.updateCollege);
 
 router.get('/uniAll', authenticateToken, authorizeRole(['university']), collegeController.getCollegesByUniversity);
+// جلب أسماء وIDs الكليات التابعة لجامعة معينة
+router.get('/getNamesByUni/:university_id', authenticateToken, authorizeRole(['admin', 'authority', 'university']), collegeController.getCollegeNameAndIdByUniversityId);
 module.exports = router;

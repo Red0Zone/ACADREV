@@ -26,6 +26,14 @@ const getCollegeById = async (id) => {
   return rows[0];
 };
 
+// جلب أسماء وIDs الكليات التابعة لجامعة معينة
+const getCollegeNameAndIdByUniversityId = async (universityId) => {
+  const [rows] = await db.promise().query('SELECT id, name FROM colleges WHERE university_id = ?', [universityId]);
+  return rows;
+};
+
+
+
 // تعديل بيانات كلية (بدون تعديل الاسم أو الحقول المحمية)
 const updateCollege = async (id, data) => {
   const { email, website, address, logo, head_name } = data;
@@ -42,10 +50,21 @@ const getCollegesByUniversity = async (universityId) => {
   return rows;
 };
 
+const getCollegeByDepartmentId = async (departmentId) => {
+  const [rows] = await db.promise().query(
+    `SELECT c.* FROM colleges c
+     JOIN departments d ON c.id = d.college_id
+     WHERE d.id = ?`, [departmentId]
+  );
+  return rows[0];
+};
+
 module.exports = {
   createCollege,
   getAllColleges,
   getCollegeById,
   updateCollege,
-  getCollegesByUniversity
+  getCollegesByUniversity,
+  getCollegeNameAndIdByUniversityId,
+  getCollegeByDepartmentId
 };

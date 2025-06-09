@@ -1,4 +1,4 @@
-const db = require('../db');
+const db = require('../config/db');
 
 // جلب جميع التصنيفات (المجالات)
 const getAllAreas = async () => {
@@ -33,17 +33,29 @@ const submitResponses = async (responses, programId, userId) => {
   }
 };
 
-// جلب الردود لبرنامج معيّن
-const getResponsesByProgram = async (programId) => {
+// جلب الردود لبرنامج معيّن ومجال معين
+const getResponsesByAreaAndProgram = async (areaId, programId) => {
   const [rows] = await db.promise().query(`
-    SELECT r.*, h.text AS header_text, i.name AS item_name
+    SELECT r.item_id, r.header_id, r.value, h.text AS header_text, i.name AS item_name 
     FROM qnt_responses r
     LEFT JOIN qnt_headers h ON r.header_id = h.id
     LEFT JOIN qnt_items i ON r.item_id = i.id
-    WHERE r.program_id = ?
-  `, [programId]);
+    WHERE h.num = ? AND r.program_id = ?
+  `, [areaId, programId]);
   return rows;
 };
+
+// // جلب الردود لبرنامج معيّن
+// const getResponsesByProgram = async (programId) => {
+//   const [rows] = await db.promise().query(`
+//     SELECT r.*, h.text AS header_text, i.name AS item_name
+//     FROM qnt_responses r
+//     LEFT JOIN qnt_headers h ON r.header_id = h.id
+//     LEFT JOIN qnt_items i ON r.item_id = i.id
+//     WHERE r.program_id = ?
+//   `, [programId]);
+//   return rows;
+// };
 
 // تعديل قيمة واحدة
 const updateResponseValue = async (id, value) => {
@@ -111,22 +123,47 @@ const getCompletedAreasForProgram = async (programId) => {
     `, [programId]);
     return rows;
   };
-  
-  // 14. نسبة إنجاز كل مجال
+    // 14. نسبة إنجاز كل مجال
   const getAreaProgress = async (programId) => {
-    const [rows] = await db.promise().query(`
-      SELECT a.id AS area_id, a.text_ar AS area_name,
-             COUNT(DISTINCT h.id) AS total_headers,
-             COUNT(DISTINCT r.header_id) AS filled_headers,
-             ROUND(COUNT(DISTINCT r.header_id) / COUNT(DISTINCT h.id) * 100, 1) AS completion_percent
-      FROM qnt_areas a
-      JOIN qnt_headers h ON h.num = a.id
-      LEFT JOIN qnt_responses r ON r.header_id = h.id AND r.program_id = ?
-      GROUP BY a.id, a.text_ar
-    `, [programId]);
-    return rows;
-  };
-  
+  const [rows] = await db.promise().query(`
+    SELECT
+        a.id AS area_id,
+        a.text_ar AS area_name,
+        COALESCE(total_calc.total_fields, 0) AS total_fields,
+        COALESCE(filled_calc.filled_fields, 0) AS filled_fields,
+        CASE
+            WHEN COALESCE(total_calc.total_fields, 0) = 0 THEN 0.0
+            ELSE ROUND(COALESCE(filled_calc.filled_fields, 0) * 100.0 / COALESCE(total_calc.total_fields, 1), 1)
+        END AS completion_percent
+    FROM qnt_areas a
+    LEFT JOIN (
+        SELECT 
+            h.num AS area_id,
+            COUNT(h.id) * COALESCE(item_counts.item_count, 1) AS total_fields
+        FROM qnt_headers h
+        LEFT JOIN (
+            SELECT area_id, COUNT(*) AS item_count
+            FROM qnt_items
+            GROUP BY area_id
+        ) item_counts ON h.num = item_counts.area_id
+        GROUP BY h.num
+    ) total_calc ON a.id = total_calc.area_id
+    LEFT JOIN (
+        SELECT 
+            h.num AS area_id,
+            COUNT(DISTINCT CASE 
+                WHEN r.item_id IS NOT NULL THEN CONCAT(r.header_id, '-', r.item_id)
+                ELSE CAST(r.header_id AS CHAR)
+            END) AS filled_fields
+        FROM qnt_headers h
+        LEFT JOIN qnt_responses r ON h.id = r.header_id AND r.program_id = ?
+        GROUP BY h.num
+    ) filled_calc ON a.id = filled_calc.area_id
+    ORDER BY a.id
+  `, [programId]);
+  return rows;
+};
+
   // 15. المؤشرات الناقصة لبرنامج معين في مجال معين
   const getMissingResponses = async (programId, areaId) => {
     const [rows] = await db.promise().query(`
@@ -169,7 +206,7 @@ module.exports = {
   getHeadersByArea,
   getItemsByArea,
   submitResponses,
-  getResponsesByProgram,
+  getResponsesByAreaAndProgram,
   updateResponseValue,
   deleteResponse,
   getAllResponses,

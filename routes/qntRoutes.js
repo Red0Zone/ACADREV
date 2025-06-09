@@ -7,7 +7,7 @@ const { authenticateToken, authorizeRole } = require('../middlewares/authMiddlew
 router.get('/areas', authenticateToken, qntController.getAreas);
 router.get('/headers/:areaId', authenticateToken, qntController.getHeaders);
 router.get('/items/:areaId', authenticateToken, qntController.getItems);
-router.get('/responses/:programId', authenticateToken, qntController.getProgramResponses);
+router.get('/responses/:programID/area/:areaID', authenticateToken, qntController.getProgramResponses);
 router.get('/responses', authenticateToken, qntController.getAllResponses);
 router.get('/summary/:areaId', authenticateToken, qntController.getAreaSummary);
 router.get('/submitted/:userId/:programId', authenticateToken, qntController.getUserSubmittedAreas);

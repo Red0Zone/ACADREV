@@ -50,6 +50,11 @@ const getAllColleges = async (req, res) => {
 
 // 3. الكلية تعرض نفسها
 const getMyCollege = async (req, res) => {
+  if( req.user.role == 'department' ) {
+    const college = await collegeModel.getCollegeByDepartmentId(req.user.department_id);
+    return res.status(200).json(college);
+  }
+  else{
   const id = req.user.college_id;
 
   try {
@@ -58,6 +63,7 @@ const getMyCollege = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: 'Error fetching college', error: err });
   }
+}
 };
 
 // 4. تعديل بيانات الكلية
@@ -78,7 +84,7 @@ const updateCollege = async (req, res) => {
 
 // 5. Get colleges for a specific university (based on logged-in university user)
 const getCollegesByUniversity = async (req, res) => {
-  const university_id = req.params.university_id; // Get university_id from the authenticated user's token
+  const university_id = req.user.university_id; // Get university_id from the authenticated user's token
 
   if (!university_id) {
     return res.status(400).json({ message: 'University ID not found in user token.' });
@@ -97,10 +103,23 @@ const getCollegesByUniversity = async (req, res) => {
   }
 };
 
+// 6. Get college names and IDs by university ID
+const getCollegeNameAndIdByUniversityId = async (req, res) => {
+  const universityId = req.params.university_id;
+
+  try {
+    const colleges = await collegeModel.getCollegeNameAndIdByUniversityId(universityId);
+    res.status(200).json(colleges);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching college names and IDs', error: err });
+  }
+};
+
 module.exports = {
   addCollege,
   getAllColleges,
   getMyCollege,
   updateCollege,
-  getCollegesByUniversity 
+  getCollegesByUniversity,
+  getCollegeNameAndIdByUniversityId
 };

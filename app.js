@@ -10,11 +10,13 @@ const userRoutes = require('./routes/userRoutes'); // user routes
 const programRoutes = require('./routes/programRoutes');
 const authorityRoutes = require('./routes/authorityRoutes');
 const profileRoutes = require('./routes/profileRoutes');
+const cors = require('cors'); // Import CORS middleware
+
 // Evaluation routes
 const qntRoutes = require('./routes/qntRoutes');     // Quantitative evaluation
 const qualRoutes = require('./routes/qualRoutes');   // Qualitative evaluation
 app.use(express.json()); // For parsing JSON request bodies
-
+app.use(cors()); // Enable CORS for all routes
 // Mount the auth routes
 app.use('/auth', authRoutes); // All auth routes will be prefixed with /auth
 app.use('/authority', authorityRoutes);

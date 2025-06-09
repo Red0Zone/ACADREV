@@ -2,7 +2,7 @@ const db = require('../config/db');
 
 // 1. جلب جميع المجالات
 const getAllDomains = async () => {
-  const [rows] = await db.promise().query(`SELECT * FROM domanins`);
+  const [rows] = await db.promise().query(`SELECT * FROM domains`);
   return rows;
 };
 
@@ -36,10 +36,29 @@ const saveOrUpdateResponse = async (data) => {
     );
     return { updated: true, id: existing[0].id };
   } else {
+    // Fetch university_id, college_id, and department_id from the users table
+    let university_id = data.university_id; // Keep if passed, otherwise will be fetched
+    let college_id = data.college_id;
+    let department_id = data.department_id;
+
+    if (data.user_id) {
+      const [userRows] = await db.promise().query(
+        `SELECT university_id, college_id, department_id FROM users WHERE id = ?`,
+        [data.user_id]
+      );
+
+      if (userRows.length > 0) {
+        // Prefer fetched values if available, otherwise use what might have been passed (or null)
+        university_id = userRows[0].university_id !== undefined ? userRows[0].university_id : university_id;
+        college_id = userRows[0].college_id !== undefined ? userRows[0].college_id : college_id;
+        department_id = userRows[0].department_id !== undefined ? userRows[0].department_id : department_id;
+      }
+    }
+
     const [result] = await db.promise().query(
       `INSERT INTO qlt_responses (indicator_id, domain_id, program_id, university_id, college_id, department_id, response, comment, user_id)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [data.indicator_id, data.domain_id, data.program_id, data.university_id, data.college_id, data.department_id, data.response, data.comment, data.user_id]
+      [data.indicator_id, data.domain_id, data.program_id, university_id, college_id, department_id, data.response, data.comment, data.user_id]
     );
     return { inserted: true, id: result.insertId };
   }
@@ -49,7 +68,7 @@ const saveOrUpdateResponse = async (data) => {
 const getUnansweredIndicators = async (programId) => {
   const [rows] = await db.promise().query(`
     SELECT i.*, d.domain_ar FROM indicators i
-    JOIN domanins d ON i.domain = d.id
+    JOIN domains d ON i.domain = d.id
     WHERE i.id NOT IN (
       SELECT indicator_id FROM qlt_responses WHERE program_id = ?
     )
@@ -63,7 +82,7 @@ const getSummaryByDomain = async (programId) => {
     SELECT d.id AS domain_id, d.domain_ar,
       COUNT(i.id) AS total_indicators,
       COUNT(r.id) AS filled
-    FROM domanins d
+    FROM domains d
     LEFT JOIN indicators i ON i.domain = d.id
     LEFT JOIN qlt_responses r ON r.indicator_id = i.id AND r.program_id = ?
     GROUP BY d.id

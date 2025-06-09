@@ -1,10 +1,16 @@
 const bcrypt = require('bcrypt');
 const departmentModel = require('../models/departmentModel');
 const userModel = require('../models/userModel');
+const db = require('../config/db');
+const DepartmentService = require('../services/departmentService');
+
+const departmentService = new DepartmentService(db);
+const {buildFilters, handlePaginatedRequest} = departmentService;
+
 
 // 1. الكلية تنشئ القسم + مستخدم مرتبط
 const addDepartment = async (req, res) => {
-  const { name, username,email, password } = req.body;
+  const { name, username, email, password } = req.body;
   const college_id = req.user.college_id;
 
   try {
@@ -15,7 +21,7 @@ const addDepartment = async (req, res) => {
       address: null,
       logo: null,
       college_id,
-      head_name: null // ✅ يبدأ كـ null
+      head_name: null
     });
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -39,12 +45,8 @@ const addDepartment = async (req, res) => {
 
 // 2. عرض كل الأقسام
 const getAllDepartments = async (req, res) => {
-  try {
-    const departments = await departmentModel.getAllDepartments();
-    res.status(200).json(departments);
-  } catch (err) {
-    res.status(500).json({ message: 'Error fetching departments', error: err });
-  }
+  const filters = buildFilters(req.query);
+  await handlePaginatedRequest(req, res, filters, 'All departments retrieved successfully');
 };
 
 // 3. عرض قسم حالي (من قبل المسؤول)
@@ -64,7 +66,7 @@ const updateDepartment = async (req, res) => {
   const id = req.user.department_id;
 
   if ('name' in req.body) {
-    return res.status(403).json({ message: 'Name is not editable' });
+    return res.status(500).json({ message: 'Name is not editable' });
   }
 
   try {
@@ -75,26 +77,38 @@ const updateDepartment = async (req, res) => {
   }
 };
 
+// 5. عرض الأقسام حسب الكلية
 const getDepartmentsByCollege = async (req, res) => {
-  const college_id = req.params.college_id;
+  const filters = buildFilters(req.query, req.params.college_id);
+  await handlePaginatedRequest(req, res, filters, 'Departments by college retrieved successfully');
+};
 
+// 6. عرض أسماء الأقسام حسب الكلية
+const getDepartmenNameByCollegeId = async (req, res) => {
+  const college_id = req.params.college_id;
+  if (!college_id) {
+    return res.status(400).json({ message: 'College ID is required' });
+  }
   try {
-    const departments = await departmentModel.getDepartmentsByCollege(college_id);
+    const departments = await departmentModel.getDepartmenNameByCollegeId(college_id);
     res.status(200).json(departments);
   } catch (err) {
-    res.status(500).json({ message: 'Error fetching departments by college', error: err });
+    res.status(500).json({ message: 'Error fetching department names', error: err });
   }
 };
 
+// 7. عرض الأقسام حسب الجامعة
 const getDepartmentUniversity = async (req, res) => {
   const university_id = req.params.university_id;
-  try {
-    const colleges = await departmentModel.getDepartmentUnversity(university_id);
-    res.status(200).json(colleges);
-  } catch (err) {
-    res.status(500).json({ message: 'Error fetching colleges', error: err });
+  if (!university_id) {
+    return res.status(400).json({ message: 'University ID is required' });
   }
+  const filters = buildFilters(req.query, null, university_id);
+  await handlePaginatedRequest(req, res, filters, 'Departments by university retrieved successfully');
 };
+
+//TODO: Implement the function to get department using college_id and university_id with departmentService new functions
+
 
 module.exports = {
   addDepartment,
@@ -102,5 +116,6 @@ module.exports = {
   getMyDepartment,
   updateDepartment,
   getDepartmentsByCollege,
-  getDepartmentUniversity
+  getDepartmentUniversity,
+  getDepartmenNameByCollegeId
 };
