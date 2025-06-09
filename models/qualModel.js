@@ -7,7 +7,7 @@ const getAllDomains = async () => {
 };
 
 // 2. جلب المؤشر
-المجال
+// المجال
 const getIndicatorsByDomain = async (domainId) => {
   const [rows] = await db.promise().query(
     `SELECT * FROM indicators WHERE domain = ?`, [domainId]

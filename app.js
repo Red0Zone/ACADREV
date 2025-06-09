@@ -1,10 +1,11 @@
 // app.js
+const db = require('./config/db');
 
 const express = require('express');
 const app = express();
 const authRoutes = require('./routes/authRoutes'); // Adjust the path as needed
 const universityRoutes = require('./routes/universityRoutes'); // University routes
-const collageRoutes = require('./routes/collageRoutes'); // collages routes
+const collageRoutes = require('./routes/collegeRoutes'); // collages routes
 const departmentRoutes = require('./routes/departmentRoutes'); // department routes
 const userRoutes = require('./routes/userRoutes'); // user routes
 const programRoutes = require('./routes/programRoutes');
@@ -13,6 +14,11 @@ const profileRoutes = require('./routes/profileRoutes');
 // Evaluation routes
 const qntRoutes = require('./routes/qntRoutes');     // Quantitative evaluation
 const qualRoutes = require('./routes/qualRoutes');   // Qualitative evaluation
+
+const adminRoutes = require('./routes/adminRoutes');// For Admin
+const reportRoutes = require('./routes/reportRoutes');
+const qualitativeRoutes = require('./routes/qualitativeScoreRoutes');
+
 app.use(express.json()); // For parsing JSON request bodies
 
 // Mount the auth routes
@@ -26,6 +32,10 @@ app.use('/programs', programRoutes);
 app.use('/profile', profileRoutes);
 app.use('/qnt', qntRoutes);     // Quantitative
 app.use('/qual', qualRoutes);   // Qualitative
+app.use('/admin', adminRoutes);
+app.use('/report', reportRoutes);
+app.use('/qualitative', qualitativeRoutes);
+
 // ... other routes and middleware ...
 
 module.exports = app; // Export the configured app

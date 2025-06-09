@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const qntController = require('../controllers/qntController');
 const { authenticateToken, authorizeRole } = require('../middlewares/authMiddleware');
+const db = require('../config/db');
 
 // 🔹 GET routes - مفتوحة لأي مستخدم مسجل دخول
 router.get('/areas', authenticateToken, qntController.getAreas);
