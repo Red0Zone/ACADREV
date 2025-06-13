@@ -1,4 +1,5 @@
 const qntModel = require('../models/qntModel');
+const db = require('../config/db');
 
 const getAreas = async (req, res) => {
   console.log("getAreas: ",req.body);
