@@ -71,4 +71,22 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { login };
+// تسجيل الخروج: إضافة التوكن للقائمة السوداء
+const logout = async (req, res) => {
+  try {
+    const token = req.token; // تم تمريره من checkBlacklist
+    if (!token) return res.status(400).json({ message: 'Token not found' });
+
+    await db.promise().query(
+      'INSERT INTO revoked_tokens (token) VALUES (?)',
+      [token]
+    );
+
+    res.status(200).json({ message: 'Logged out successfully' });
+  } catch (err) {
+    console.error('Logout error:', err);
+    res.status(500).json({ message: 'Logout failed' });
+  }
+};
+
+module.exports = { login ,logout};
