@@ -7,7 +7,7 @@ const getDomainWeights = async () => {
 
   const [domains] = await db.promise().query(`
     SELECT d.id AS domain_id, d.domain_ar AS domain_name, COUNT(i.id) AS indicator_count
-    FROM domanins d
+    FROM domains d
     LEFT JOIN indicators i ON i.domain = d.id
     GROUP BY d.id
   `);
@@ -26,7 +26,7 @@ const getDomainWeights = async () => {
 const getDomainScores = async (programId) => {
   const [domains] = await db.promise().query(`
     SELECT d.id AS domain_id, d.domain_ar AS domain_name, COUNT(i.id) AS indicator_count
-    FROM domanins d
+    FROM domains d
     LEFT JOIN indicators i ON i.domain = d.id
     GROUP BY d.id
   `);

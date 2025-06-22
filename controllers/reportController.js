@@ -1,15 +1,10 @@
 const reportModel = require('../models/reportModel');
+const ReportService = require('../services/reportService');
+const db = require('../config/db');
+const reportService = new ReportService(db);
 
-// جلب المتطلبات الخاصة بتقارير مجال محدد
 const getPrompts = async (req, res) => {
-  try {
-    const domainId = req.params.domainId;
-    const data = await reportModel.getPromptsByDomain(domainId);
-    res.json(data);
-  } catch (err) {
-    console.error('Error fetching prompts:', err);
-    res.status(500).json({ message: 'Failed to fetch prompts' });
-  }
+    reportService.handlePaginatedRequest(req, res, 'Reports retrieved successfully');
 };
 
 // جلب الردود المكتوبة من المقيم (للعرض للأدمن أو المقيم)
