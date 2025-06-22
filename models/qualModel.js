@@ -2,7 +2,7 @@ const db = require('../config/db');
 
 // 1. جلب جميع المجالات (Domains)
 const getAllDomains = async () => {
-  const [rows] = await db.promise().query(`SELECT * FROM domanis`);
+  const [rows] = await db.promise().query(`SELECT * FROM domains`);
   return rows;
 };
 
@@ -80,7 +80,7 @@ const saveOrUpdateResponse = async (data) => {
 const getUnansweredIndicators = async (programId) => {
   const [rows] = await db.promise().query(`
     SELECT i.*, d.domain_ar FROM indicators i
-    JOIN domanis d ON i.domain = d.id
+    JOIN domains d ON i.domain = d.id
     WHERE i.id NOT IN (
       SELECT indicator_id FROM qlt_responses WHERE program_id = ?
     )
@@ -94,7 +94,7 @@ const getSummaryByDomain = async (programId) => {
     SELECT d.id AS domain_id, d.domain_ar,
            COUNT(i.id) AS total_indicators,
            COUNT(r.id) AS filled
-    FROM domanis d
+    FROM domains d
     LEFT JOIN indicators i ON i.domain = d.id
     LEFT JOIN qlt_responses r ON r.indicator_id = i.id AND r.program_id = ?
     GROUP BY d.id

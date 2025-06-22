@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const qlt = require('../controllers/qualController');
-const { uploadEvidence } = require('../controllers/evidenceController');
+const { uploadEvidence,getEvidence } = require('../controllers/evidenceController');
 const { authenticateToken, authorizeRole } = require('../middlewares/authMiddleware');
 
 // عرض البيانات
@@ -17,5 +17,5 @@ router.delete('/responses/:id', authenticateToken, authorizeRole(['department'])
 
 // رفع الأدلة
 router.post('/responses/:responseId/evidence', authenticateToken, authorizeRole(['department']), uploadEvidence);
-
+router.get('/responses/:responseId/evidence', authenticateToken, authorizeRole(['department']), getEvidence);
 module.exports = router;

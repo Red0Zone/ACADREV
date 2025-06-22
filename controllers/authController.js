@@ -3,13 +3,16 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 const login = async (req, res) => {
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    return res.status(400).json({ message: 'Username and password are required' });
-  }
-
   try {
+    // Safely handle req.body destructuring
+    const { username, password } = req.body || {};
+    console.log('Login attempt:', { username, password });
+    console.log('Request body:', req.body);
+
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Username and password are required' });
+    }
+
     const [users] = await db.promise().query(
       'SELECT * FROM users WHERE username = ?', [username]
     );
@@ -67,7 +70,7 @@ const login = async (req, res) => {
 
   } catch (err) {
     console.error('Login error:', err);
-    res.status(500).json({ message: 'Internal server error', error: err });
+    res.status(500).json({ message: 'Internal server error', error: err.message });
   }
 };
 
@@ -85,7 +88,7 @@ const logout = async (req, res) => {
     res.status(200).json({ message: 'Logged out successfully' });
   } catch (err) {
     console.error('Logout error:', err);
-    res.status(500).json({ message: 'Logout failed' });
+    res.status(500).json({ message: 'Logout failed', error: err.message });
   }
 };
 
