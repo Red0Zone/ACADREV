@@ -37,6 +37,24 @@ const addDepartment = async (req, res) => {
   }
 };
 
+//For Delete
+const deleteDepartment = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await departmentModel.deleteDepartment(id);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Department not found' });
+    }
+
+    res.status(200).json({ message: 'Department deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error deleting department', error: err });
+  }
+};
+
+
 // 2. عرض كل الأقسام
 const getAllDepartments = async (req, res) => {
   try {
@@ -102,5 +120,6 @@ module.exports = {
   getMyDepartment,
   updateDepartment,
   getDepartmentsByCollege,
-  getDepartmentUniversity
+  getDepartmentUniversity,
+  deleteDepartment
 };

@@ -42,6 +42,22 @@ const addUniversity = async (req, res) => {
   }
 };
 
+// For Delete
+const deleteUniversity = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await universityModel.deleteUniversity(id);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'University not found' });
+    }
+
+    res.status(200).json({ message: 'University deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error deleting university', error: err });
+  }
+};
 
 // 2. عرض كل الجامعات (لـ هيئة الاعتماد أو الأدمن)
 const getAllUniversities = async (req, res) => {
@@ -85,5 +101,6 @@ module.exports = {
   addUniversity,
   getAllUniversities,
   getMyUniversity,
-  updateUniversity
+  updateUniversity,
+  deleteUniversity
 };

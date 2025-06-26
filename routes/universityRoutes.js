@@ -5,6 +5,8 @@ const { authenticateToken, authorizeRole } = require('../middlewares/authMiddlew
 
 // هيئة الاعتماد تضيف جامعة
 router.post('/add', authenticateToken, authorizeRole(['authority']), universityController.addUniversity);
+// هيئة الاعتماد تحذف جامعة
+router.delete('/delete/:id', authenticateToken, authorizeRole(['authority']), universityController.deleteUniversity);
 
 // عرض كل الجامعات (admin أو authority)
 router.get('/all', authenticateToken, authorizeRole(['admin', 'authority']), universityController.getAllUniversities);

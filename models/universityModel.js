@@ -14,6 +14,7 @@ const createUniversity = async (data) => {
   return result.insertId;
 };
 
+
 // جلب جميع الجامعات
 const getAllUniversities = async () => {
   const [rows] = await db.promise().query(

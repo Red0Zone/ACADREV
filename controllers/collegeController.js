@@ -97,10 +97,28 @@ const getCollegesByUniversity = async (req, res) => {
   }
 };
 
+// For Delete
+const deleteCollege = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await collegeModel.deleteCollege(id);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'College not found' });
+    }
+
+    res.status(200).json({ message: 'College deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error deleting college', error: err });
+  }
+};
+
 module.exports = {
   addCollege,
   getAllColleges,
   getMyCollege,
   updateCollege,
-  getCollegesByUniversity 
+  getCollegesByUniversity,
+  deleteCollege
 };

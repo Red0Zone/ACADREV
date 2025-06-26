@@ -11,6 +11,15 @@ const createDepartment = async (data) => {
   return result.insertId;
 };
 
+//For Delete
+const deleteDepartment = async (id) => {
+  const [result] = await db.promise().query(
+    'DELETE FROM departments WHERE id = ?',
+    [id]
+  );
+  return result;
+};
+
 // جلب كل الأقسام
 const getAllDepartments = async () => {
   const [rows] = await db.promise().query(
@@ -57,5 +66,6 @@ module.exports = {
   getAllDepartments,
   getDepartmentById,
   updateDepartment,
-  getDepartmentsByCollege // Add the new function to exports
+  getDepartmentsByCollege,
+  deleteDepartment
 };

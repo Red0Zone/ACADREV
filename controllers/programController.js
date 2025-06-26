@@ -19,6 +19,23 @@ const addProgram = async (req, res) => {
   }
 };
 
+const deleteProgram = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await programModel.deleteProgram(id);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Program not found' });
+    }
+
+    res.status(200).json({ message: 'Program deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error deleting program', error: err });
+  }
+};
+
+
 // عرض جميع البرامج
 const getAllPrograms = async (req, res) => {
   try {
@@ -58,5 +75,6 @@ module.exports = {
   addProgram,
   getAllPrograms,
   getMyPrograms,
-  updateProgram
+  updateProgram,
+  deleteProgram
 };
