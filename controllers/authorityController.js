@@ -31,6 +31,23 @@ const adminAddAuthority = async (req, res) => {
   }
 };
 
+// For Delete
+const deleteAuthority = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const result = await authorityModel.deleteAuthority(id);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Authority not found' });
+    }
+
+    res.status(200).json({ message: 'Authority deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error deleting authority', error: err });
+  }
+};
+
 // 2. تعديل بيانات الهيئة من قبل نفسها
 const updateAuthorityProfile = async (req, res) => {
   const authorityId = req.user.authority_id;
@@ -101,5 +118,6 @@ module.exports = {
   updateAuthorityProfile,
   getMyAuthority,
   getAllAuthorities,
-  getAuthorityById
+  getAuthorityById,
+  deleteAuthority
 };

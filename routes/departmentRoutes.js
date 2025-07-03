@@ -11,6 +11,8 @@ router.post(
   authorizeRole(['college']),
   departmentController.addDepartment
 );
+// الكلية تحذف قسم تابع لها
+router.delete('/delete/:id', authenticateToken, authorizeRole(['college']), departmentController.deleteDepartment);
 
 // 📋 عرض كل الأقسام (لـ الجميع ما عدا القسم نفسه)
 router.get(

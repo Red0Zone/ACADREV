@@ -5,6 +5,7 @@ const { authenticateToken, authorizeRole } = require('../middlewares/authMiddlew
 
 // جامعة تضيف كلية
 router.post('/add', authenticateToken, authorizeRole(['university']), collegeController.addCollege);
+router.delete('/delete/:id', authenticateToken, authorizeRole(['university']), collegeController.deleteCollege);
 
 // عرض كل الكليات
 router.get('/all', authenticateToken, authorizeRole(['admin', 'authority', 'university']), collegeController.getAllColleges);

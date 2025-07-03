@@ -14,6 +14,15 @@ const createProgram = async (data) => {
   return result.insertId;
 };
 
+//For Delete
+const deleteProgram = async (id) => {
+  const [result] = await db.promise().query(
+    'DELETE FROM programs WHERE id = ?',
+    [id]
+  );
+  return result;
+};
+
 // عرض كل البرامج
 const getAllPrograms = async () => {
   const [rows] = await db.promise().query(
@@ -58,5 +67,6 @@ module.exports = {
   getAllPrograms,
   getProgramById,
   updateProgram,
-  getProgramNameByDepartmentId
+  getProgramNameByDepartmentId,
+  deleteProgram
 };

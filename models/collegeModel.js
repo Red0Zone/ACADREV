@@ -59,6 +59,12 @@ const getCollegeByDepartmentId = async (departmentId) => {
   return rows[0];
 };
 
+//For Delete
+const deleteCollege = async (id) => {
+  const [result] = await db.promise().query('DELETE FROM colleges WHERE id = ?', [id]);
+  return result;
+};
+
 module.exports = {
   createCollege,
   getAllColleges,
@@ -66,5 +72,6 @@ module.exports = {
   updateCollege,
   getCollegesByUniversity,
   getCollegeNameAndIdByUniversityId,
-  getCollegeByDepartmentId
+  getCollegeByDepartmentId,
+  deleteCollege
 };
