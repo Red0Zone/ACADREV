@@ -11,6 +11,10 @@ router.post(
   programController.addProgram
 );
 
+// القسم يحذف برنامج
+router.delete('/delete/:id', authenticateToken, authorizeRole(['department']), programController.deleteProgram);
+
+
 // 📋 عرض جميع البرامج (لـ admin, authority, university, college, department)
 router.get(
   '/all',

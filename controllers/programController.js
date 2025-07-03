@@ -24,15 +24,36 @@ const addProgram = async (req, res) => {
   }
 };
 
-// عرض جميع البرامج
-const getAllPrograms = async (req, res) => {
-  const filters = buildFilters(req.query, req.user.college_id, req.user.university_id, req.user.department_id);
-  await handlePaginatedRequest(req, res, filters, 'All programs retrieved successfully');
+const deleteProgram = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await programModel.deleteProgram(id);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Program not found' });
+    }
+
+    res.status(200).json({ message: 'Program deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error deleting program', error: err });
+  }
 };
 
-// // عرض برامج القسم الحالي
-// const getMyPrograms = async (req, res) => {
-//   const dep = req.user.department_id;
+
+// عرض جميع البرامج
+const getAllPrograms = async (req, res) => {
+  try {
+    const programs = await programModel.getAllPrograms();
+    res.status(200).json(programs);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching programs', error: err });
+  }
+};
+
+// عرض برامج القسم الحالي
+const getMyPrograms = async (req, res) => {
+  const dep = req.user.department_id;
 
 //   try {
 //     const all = await programModel.getAllPrograms();
@@ -41,7 +62,7 @@ const getAllPrograms = async (req, res) => {
 //   } catch (err) {
 //     res.status(500).json({ message: 'Error filtering programs', error: err });
 //   }
-// };
+ };
 
 // تعديل البرنامج
 const updateProgram = async (req, res) => {
@@ -89,5 +110,6 @@ module.exports = {
   getAllPrograms,
   updateProgram,
   getProgramById,
-  getProgramNameByDepartmentId
+  getProgramNameByDepartmentId,
+  deleteProgram
 };

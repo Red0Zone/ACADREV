@@ -5,6 +5,7 @@ const { authenticateToken, authorizeRole } = require('../middlewares/authMiddlew
 
 // من قبل الأدمن فقط
 router.post('/add', authenticateToken, authorizeRole(['admin']), authorityController.adminAddAuthority);
+router.delete('/delete/:id', authenticateToken, authorizeRole(['admin']), authorityController.deleteAuthority);
 
 // من قبل هيئة الاعتماد
 router.put('/update', authenticateToken, authorizeRole(['authority']), authorityController.updateAuthorityProfile);

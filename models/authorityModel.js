@@ -9,6 +9,15 @@ const createAuthority = async (name) => {
   return result.insertId;
 };
 
+// For Delete
+const deleteAuthority = async (id) => {
+  const [result] = await db.promise().query(
+    `DELETE FROM authorities WHERE id = ?`,
+    [id]
+  );
+  return result;
+};
+
 // تعديل بيانات الهيئة (بدون الاسم)
 const updateAuthorityProfile = async (id, data) => {
   const { email, website, description, logo } = data;
@@ -33,5 +42,6 @@ const getAuthorityById = async (id) => {
 module.exports = {
   createAuthority,
   updateAuthorityProfile,
-  getAuthorityById
+  getAuthorityById,
+  deleteAuthority
 };
