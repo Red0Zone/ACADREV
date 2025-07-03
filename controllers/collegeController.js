@@ -137,5 +137,7 @@ module.exports = {
   getAllColleges,
   getMyCollege,
   updateCollege,
-  getCollegesByUniversity 
+  getCollegesByUniversity ,
+  getCollegeNameAndIdByUniversityId,
+  deleteCollege
 };
