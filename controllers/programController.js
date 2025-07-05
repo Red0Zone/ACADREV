@@ -42,27 +42,12 @@ const deleteProgram = async (req, res) => {
 
 
 // عرض جميع البرامج
-const getAllPrograms = async (req, res) => {
-  try {
-    const programs = await programModel.getAllPrograms();
-    res.status(200).json(programs);
-  } catch (err) {
-    res.status(500).json({ message: 'Error fetching programs', error: err });
-  }
+ const getAllPrograms = async (req, res) => {
+  const filters = buildFilters(req.query, req.user.college_id, req.user.university_id, req.user.department_id);
+  await handlePaginatedRequest(req, res, filters, 'All programs retrieved successfully');
 };
 
-// عرض برامج القسم الحالي
-const getMyPrograms = async (req, res) => {
-  const dep = req.user.department_id;
 
-//   try {
-//     const all = await programModel.getAllPrograms();
-//     const filtered = all.filter(p => p.dep === dep);
-//     res.status(200).json(filtered);
-//   } catch (err) {
-//     res.status(500).json({ message: 'Error filtering programs', error: err });
-//   }
- };
 
 // تعديل البرنامج
 const updateProgram = async (req, res) => {

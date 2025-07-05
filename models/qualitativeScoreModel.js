@@ -6,7 +6,7 @@ const getDomainWeights = async () => {
   const totalIndicators = totalRow[0].total;
 
   const [domains] = await db.promise().query(`
-    SELECT d.id AS domain_id, d.domain_ar AS domain_name, COUNT(i.id) AS indicator_count
+    SELECT d.id AS domain_id, d.domain_ar , d.domain_en, COUNT(i.id) AS indicator_count
     FROM domains d
     LEFT JOIN indicators i ON i.domain = d.id
     GROUP BY d.id
@@ -14,7 +14,8 @@ const getDomainWeights = async () => {
 
   return domains.map(row => ({
     domain_id: row.domain_id,
-    domain_name: row.domain_name,
+    domain_ar: row.domain_ar,
+    domain_en: row.domain_en,
     indicator_count: row.indicator_count,
     domain_weight: totalIndicators > 0
       ? Number(((row.indicator_count / totalIndicators) * 100).toFixed(2))
@@ -25,7 +26,7 @@ const getDomainWeights = async () => {
 // 🟢 2. حساب Si فقط (درجة كل مجال حسب الردود)
 const getDomainScores = async (programId) => {
   const [domains] = await db.promise().query(`
-    SELECT d.id AS domain_id, d.domain_ar AS domain_name, COUNT(i.id) AS indicator_count
+    SELECT d.id AS domain_id, d.domain_ar, d.domain_en, COUNT(i.id) AS indicator_count
     FROM domains d
     LEFT JOIN indicators i ON i.domain = d.id
     GROUP BY d.id
@@ -53,7 +54,8 @@ const getDomainScores = async (programId) => {
 
     results.push({
       domain_id: domain.domain_id,
-      domain_name: domain.domain_name,
+      domain_ar: domain.domain_ar,
+      domain_en: domain.domain_en,
       indicator_count: domain.indicator_count,
       domain_score: score
     });
@@ -74,7 +76,8 @@ const getWeightedResults = async (programId) => {
     const weighted = Number(((wi.domain_weight * si) / 100).toFixed(6));
     return {
       domain_id: wi.domain_id,
-      domain_name: wi.domain_name,
+      domain_ar: wi.domain_ar,
+      domain_en: wi.domain_en,
       indicator_count: wi.indicator_count,
       domain_weight: wi.domain_weight,
       domain_score: si,

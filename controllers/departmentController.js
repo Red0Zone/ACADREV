@@ -63,12 +63,8 @@ const deleteDepartment = async (req, res) => {
 
 // 2. عرض كل الأقسام
 const getAllDepartments = async (req, res) => {
-  try {
-    const departments = await departmentModel.getAllDepartments();
-    res.status(200).json(departments);
-  } catch (err) {
-    res.status(500).json({ message: 'Error fetching departments', error: err });
-  }
+   const filters = buildFilters(req.query, req.user.college_id, req.user.university_id);
+  await handlePaginatedRequest(req, res, filters, 'All departments retrieved successfully');
 };
 
 // 3. عرض قسم حالي (من قبل المسؤول)

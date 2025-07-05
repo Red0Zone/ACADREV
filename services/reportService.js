@@ -19,7 +19,8 @@ class ReportService {
             .select([
                 'r.id',
                 'r.dom',
-                'r.result'
+                'r.result',
+                'r.result_en'
             ]);
 
         
