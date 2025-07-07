@@ -23,14 +23,6 @@ router.get(
   programController.getAllPrograms
 );
 
-// // 👁️ القسم يعرض برامجه فقط
-// router.get(
-//   '/my',
-//   authenticateToken,
-//   authorizeRole(['department']),
-//   programController.getMyPrograms
-// );
-
 // ✏️ تعديل برنامج (من قبل القسم)
 router.put(
   '/update/:id',
