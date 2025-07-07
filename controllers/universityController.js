@@ -7,6 +7,26 @@ const addUniversity = async (req, res) => {
   const { name, username,email, password } = req.body;
   const authority_id = req.user.authority_id;
 
+  // Validate required fields
+    if (!name || !username || !email || !password) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+    // Check if authority name already exists
+    const existingUniversity = await universityModel.getUniversityByName(name);
+    if (existingUniversity) {
+      return res.status(400).json({ message: 'University name already exists' });
+    }
+    // Check if username already exists
+    const existingUsername = await userModel.getUserByUsername(username);
+    if (existingUsername) {
+      return res.status(400).json({ message: 'Username already exists' });
+    }
+    // Check if email already exists
+    const existingEmail = await userModel.getUserByEmail(email);
+    if (existingEmail) {
+      return res.status(400).json({ message: 'Email already exists' });
+    }
+
   try {
     const universityId = await universityModel.createUniversity({
       name,
@@ -48,6 +68,7 @@ const deleteUniversity = async (req, res) => {
 
   try {
     const result = await universityModel.deleteUniversity(id);
+
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'University not found' });

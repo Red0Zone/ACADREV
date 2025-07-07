@@ -38,10 +38,19 @@ const getAuthorityById = async (id) => {
   return rows[0];
 };
 
+const getAuthorityByName = async (name) => {
+  const [rows] = await db.promise().query(
+    `SELECT * FROM authorities WHERE name = ?`,
+    [name]
+  );
+  return rows[0];
+};
+
 
 module.exports = {
   createAuthority,
   updateAuthorityProfile,
   getAuthorityById,
-  deleteAuthority
+  deleteAuthority,
+  getAuthorityByName
 };

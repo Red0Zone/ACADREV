@@ -17,6 +17,7 @@ const createUser = async (req, res) => {
   if (!allowedCreation[creator.role]?.includes(role)) {
     return res.status(403).json({ message: 'You are not allowed to create this role.' });
   }
+  
 
   const hashedPassword = await bcrypt.hash(password, 10);
 

@@ -98,10 +98,28 @@ const getUserProfileById = async (id) => {
   return rows[0];
 };
 
+const getUserByUsername = async (username) => {
+  const [rows] = await db.promise().query(
+    'SELECT * FROM users WHERE username = ?',
+    [username]
+  );
+  return rows[0];
+};
+
+getUserByEmail = async (email) => {
+  const [rows] = await db.promise().query(
+    'SELECT * FROM users WHERE email = ?',
+    [email]
+  );
+  return rows[0];
+};
+
 module.exports = {
   createUser,
   getAllUsers,
   updateUser,
   getUserProfileById,
-  deleteUser
+  deleteUser,
+  getUserByUsername,
+  getUserByEmail
 };

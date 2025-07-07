@@ -7,6 +7,27 @@ const db = require('../config/db');
 const adminAddAuthority = async (req, res) => {
   const { name, username, email, password } = req.body;
 
+  
+  // Validate required fields
+  if (!name || !username || !email || !password) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+  // Check if authority name already exists
+  const existingAuthority = await authorityModel.getAuthorityByName(name);
+  if (existingAuthority) {
+    return res.status(400).json({ message: 'Authority name already exists' });
+  }
+  // Check if username already exists
+  const existingUsername = await userModel.getUserByUsername(username);
+  if (existingUsername) {
+    return res.status(400).json({ message: 'Username already exists' });
+  }
+  // Check if email already exists
+  const existingEmail = await userModel.getUserByEmail(email);
+  if (existingEmail) {
+    return res.status(400).json({ message: 'Email already exists' });
+  }
+
   try {
     // 1. إدخال الهيئة في جدول authorities
     const authorityId = await authorityModel.createAuthority(name);
@@ -27,6 +48,7 @@ const adminAddAuthority = async (req, res) => {
 
     res.status(201).json({ message: 'Authority and user created successfully' });
   } catch (err) {
+    console.log('Error creating authority:', err);
     res.status(500).json({ message: 'Error creating authority', error: err });
   }
 };
