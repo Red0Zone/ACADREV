@@ -20,6 +20,7 @@ const qualRoutes = require('./routes/qualRoutes');   // Qualitative evaluation
 const adminRoutes = require('./routes/adminRoutes');// For Admin
 const reportRoutes = require('./routes/reportRoutes');
 const qualitativeRoutes = require('./routes/qualitativeScoreRoutes');
+const statisticsRoutes = require('./routes/statisticsRoutes'); // Statistics routes
 
 app.use(express.json()); // For parsing JSON request bodies
 app.use(cors()); // Enable CORS for all routes
@@ -37,6 +38,7 @@ app.use('/qual', qualRoutes);   // Qualitative
 app.use('/admin', adminRoutes);
 app.use('/report', reportRoutes);
 app.use('/qualitative', qualitativeRoutes);
+app.use('/statistics', statisticsRoutes); // Statistics routes
 
 // ... other routes and middleware ...
 
