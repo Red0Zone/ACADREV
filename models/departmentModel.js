@@ -33,7 +33,18 @@ const getAllDepartments = async () => {
 // جلب قسم حسب ID
 const getDepartmentById = async (id) => {
   const [rows] = await db.promise().query('SELECT * FROM departments WHERE id = ?', [id]);
-  return rows[0];
+  if (rows.length === 0) return null;
+  
+  const department = rows[0];
+  
+  // Get count of programs in this department
+  const [programCount] = await db.promise().query(
+    'SELECT COUNT(*) as programs_count FROM programs WHERE dep = ?', 
+    [id]
+  );
+
+  department.programs_count = programCount[0].programs_count;
+  return department;
 };
 
 // تعديل بيانات القسم

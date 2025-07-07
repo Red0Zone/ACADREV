@@ -7,6 +7,7 @@ class DatabasePaginator {
         this.joinClauses = [];
         this.whereConditions = [];
         this.whereParams = [];
+        this.groupByColumns = [];
         this.orderByClause = 'id ASC';
         this.perPage = 10;
         this.currentPage = 1;
@@ -70,6 +71,12 @@ class DatabasePaginator {
         return this;
     }
 
+    // Set GROUP BY
+    groupBy(columns) {
+        this.groupByColumns = Array.isArray(columns) ? columns : [columns];
+        return this;
+    }
+
     // Set pagination parameters
     paginate(page = 1, perPage = 10) {
         this.currentPage = Math.max(1, parseInt(page));
@@ -82,7 +89,12 @@ class DatabasePaginator {
         let query;
         
         if (forCount) {
-            query = `SELECT COUNT(*) as total FROM ${this.tableName}`;
+            // For count queries with GROUP BY, we need to count distinct groups
+            if (this.groupByColumns.length > 0) {
+                query = `SELECT COUNT(DISTINCT ${this.groupByColumns[0]}) as total FROM ${this.tableName}`;
+            } else {
+                query = `SELECT COUNT(*) as total FROM ${this.tableName}`;
+            }
         } else {
             query = `SELECT ${this.selectColumns.join(', ')} FROM ${this.tableName}`;
         }
@@ -95,6 +107,11 @@ class DatabasePaginator {
         // Add WHERE conditions
         if (this.whereConditions.length > 0) {
             query += ' WHERE ' + this.whereConditions.join(' AND ');
+        }
+
+        // Add GROUP BY for data queries only (not for count queries with GROUP BY)
+        if (!forCount && this.groupByColumns.length > 0) {
+            query += ' GROUP BY ' + this.groupByColumns.join(', ');
         }
 
         // Add ORDER BY and LIMIT for data query
@@ -153,6 +170,7 @@ class DatabasePaginator {
         this.joinClauses = [];
         this.whereConditions = [];
         this.whereParams = [];
+        this.groupByColumns = [];
         this.orderByClause = 'id ASC';
         this.perPage = 10;
         this.currentPage = 1;

@@ -9,7 +9,7 @@ router.delete('/delete/:id', authenticateToken, authorizeRole(['admin']), author
 
 // من قبل هيئة الاعتماد
 router.put('/update', authenticateToken, authorizeRole(['authority']), authorityController.updateAuthorityProfile);
-router.get('/profileMe', authenticateToken, authorizeRole(['authority']), authorityController.getMyAuthority);
+router.get('/profile', authenticateToken, authorizeRole(['authority']), authorityController.getMyAuthority);
 router.get('/all', authenticateToken, authorizeRole(['admin']), authorityController.getAllAuthorities);
 router.get('/:id', authenticateToken, authorizeRole(['admin']), authorityController.getAuthorityById);
 

@@ -77,6 +77,14 @@ const getUniversityByDepartmentId = async (departmentId) => {
   return rows[0];
 };
 
+const getUniversityByName = async (name) => {
+  const [rows] = await db.promise().query(
+    'SELECT * FROM universities WHERE name = ?',
+    [name]
+  );
+  return rows[0];
+};
+
 module.exports = {
   createUniversity,
   getAllUniversities,
@@ -85,5 +93,6 @@ module.exports = {
   deleteUniversity,
   getUniversityNamesAndIds,
   getUniversityByCollegeId,
-  getUniversityByDepartmentId
+  getUniversityByDepartmentId,
+  getUniversityByName
 };
