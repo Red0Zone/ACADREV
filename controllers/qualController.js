@@ -1,4 +1,4 @@
-const qualModel = require('../models/qualModel');
+const qualModel = require("../models/qualModel");
 
 // 1. جلب جميع المجالات
 const getDomains = async (req, res) => {
@@ -44,9 +44,36 @@ const getDomainSummary = async (req, res) => {
 
 // 7. حذف رد نوعي
 const removeResponse = async (req, res) => {
-  const responseId = req.params.id;
-  const result = await qualModel.deleteResponse(responseId);
-  res.json({ deleted: true, affectedRows: result.affectedRows });
+  try {
+    const responseId = req.params.id;
+    const result = await qualModel.deleteResponse(responseId);
+
+    if (result.success) {
+      const message = result.deletedResponse
+        ? `Response deleted successfully. ${result.deletedFiles.total} files processed: ${result.deletedFiles.deleted} deleted, ${result.deletedFiles.notFound} not found, ${result.deletedFiles.errors} errors.`
+        : "Response not found";
+
+      res.json({
+        success: true,
+        message,
+        deletedResponse: result.deletedResponse,
+        filesDeletionSummary: result.deletedFiles,
+        affectedRows: result.result.affectedRows,
+      });
+    } else {
+      res.status(404).json({
+        success: false,
+        message: "Response not found",
+      });
+    }
+  } catch (error) {
+    console.error("Error in removeResponse:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete response and associated files",
+      error: error.message,
+    });
+  }
 };
 
 module.exports = {
@@ -56,5 +83,5 @@ module.exports = {
   submitResponse,
   getUnanswered,
   getDomainSummary,
-  removeResponse
+  removeResponse,
 };

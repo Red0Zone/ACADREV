@@ -13,9 +13,11 @@ const createCollege = async (data) => {
 // جلب كل الكليات
 const getAllColleges = async () => {
   const [rows] = await db.promise().query(
-    `SELECT c.*, u.name AS university_name
+    `SELECT c.*, u.name AS university_name, COUNT(d.id) AS department_count
      FROM colleges c
-     LEFT JOIN universities u ON c.university_id = u.id`
+     LEFT JOIN universities u ON c.university_id = u.id
+     LEFT JOIN departments d ON c.id = d.college_id
+     GROUP BY c.id`
   );
   return rows;
 };
