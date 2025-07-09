@@ -90,9 +90,18 @@ const deleteUser = async (id) => {
 // جلب معلومات مستخدم حسب ID
 const getUserProfileById = async (id) => {
   const [rows] = await db.promise().query(
-    `SELECT id, username, email, role, authority_id, university_id, college_id, department_id, created_at, image_url
-     FROM users
-     WHERE id = ?`,
+    `SELECT 
+       u.id, u.username, u.email, u.role, u.authority_id, u.university_id, u.college_id, u.department_id, u.created_at, u.image_url,
+       a.name AS authority_name,
+       un.name AS university_name,
+       c.name AS college_name,
+       d.name AS department_name
+     FROM users u
+     LEFT JOIN authorities a ON u.authority_id = a.id
+     LEFT JOIN universities un ON u.university_id = un.id
+     LEFT JOIN colleges c ON u.college_id = c.id
+     LEFT JOIN departments d ON u.department_id = d.id
+     WHERE u.id = ?`,
     [id]
   );
   return rows[0];
